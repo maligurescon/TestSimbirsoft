@@ -1,8 +1,6 @@
 package mail.yandex;
 
-import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -11,15 +9,14 @@ import org.openqa.selenium.support.PageFactory;
 public class MailPage {
 
     public WebDriver driver;
-
     public MailPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
-        this.driver = driver;
-    }
+        this.driver = driver; }
+    static Integer currentSize;
 
     //Определение поля фильтрации сообщений
     @FindBy(xpath = "//input[@class='textinput__control']")
-    public WebElement filterMail;
+    private WebElement filterMail;
 
     //Определение кнопки фильтра "Папки"
     @FindBy(xpath = "//span[contains (text(),'Папки')]//ancestor::button")
@@ -39,15 +36,15 @@ public class MailPage {
 
     //Определение поля для ввода адресата
     @FindBy(xpath = "//div[contains(@class, 'tst-field-to')]//div[@is= 'x-bubbles']")
-    public WebElement addressMail;
+    private WebElement addressMail;
 
     //Определение поля для ввода темы сообщения
     @FindBy(xpath = "//input[@name= 'subject']")
-    public WebElement themeMail;
+    private WebElement themeMail;
 
     //Определение поля ввода сообщения
     @FindBy(xpath = "//div[@role = 'textbox']")
-    public WebElement textMail;
+    private WebElement textMail;
 
     //Определение поля написания письма
     @FindBy(xpath = "//div//[@class = 'composeReact__scrollable-content']")
@@ -57,35 +54,74 @@ public class MailPage {
     @FindBy(xpath = "//span[contains (text(), 'Отправить')]//ancestor::button")
     private WebElement sendMail;
 
+    //Определение кнопки "Вернуться во входящие"
+    @FindBy(xpath = "//a[@class = 'control link link_theme_normal ComposeDoneScreen-Link']")
+    private WebElement returnBack;
+
     //Метод для получения количества сообщений
-    public String getSizeMail() {
+    public String getSizeMail(){
         return countMale.getText();
+    }
+
+    //Получение числа из количества сообщений
+    public Integer getNumSize(){
+        return Integer.parseInt(getSizeMail().split(" ")[0]);
     }
 
     @Step
     //Ввод значения для фильтрации
-    public void fiterByTheme() {
-        filterMail.sendKeys("Simbirsoft theme");
+    public MailPage fiterByTheme(String inputTheme) {
+        filterMail.sendKeys(inputTheme);
         filterMail.submit();
+        return this;
     }
 
     @Step
     //Сортировка писем по "Входящим"
-    public void sortMail() {
+    public MailPage sortMail(){
         foldersMail.click();
         inputMail.click();
+        return this;
     }
 
     @Step
     //Нажатие кнопки "Написать
-    public void clickNew() {
+    public MailPage clickNew() {
         newMail.click();
+        return this;
+    }
+
+    @Step
+    public MailPage sendAddress(String sendAddressMail) {
+        addressMail.sendKeys(sendAddressMail);
+        return this;
+    }
+
+    //Ввод темы сообщения
+    @Step
+    public MailPage sendTheme(String inputTheme){
+        themeMail.sendKeys(inputTheme);
+        return this;
+    }
+
+    //ввод текста сообщения
+    @Step
+    public MailPage sendText(String inputText){
+        textMail.sendKeys(inputText, getSizeMail());
+        return this;
     }
 
     @Step
     //Нажатие кнопки отправить
-    public void sendMessage() {
+    public MailPage sendMessage(){
         sendMail.click();
+        return this;
     }
+
+
+
+
+
+
 }
 

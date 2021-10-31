@@ -1,13 +1,16 @@
 package mail.yandex;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +21,9 @@ public class TestMail {
     public static LoginPage loginPage;
     public static MailPage mailPage;
     public static WebDriver driver;
+    static String theme = "Simbirsoft theme";
+    static Integer beforeSize;
+    static Integer afterSize;
 
     @Before
     public void setup() {
@@ -28,6 +34,7 @@ public class TestMail {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.get("https://mail.yandex.ru/");
+        JavascriptExecutor js = (JavascriptExecutor) driver;
     }
 
     public void testSetUp() throws MalformedURLException {
@@ -39,33 +46,24 @@ public class TestMail {
 
     @Test
     public void sendingMessage() throws InterruptedException {
-        loginPage.cliclMail();
-        loginPage.loginMail.sendKeys(PropertyManager.getInstance().getAddressmail());
-        loginPage.clickSubmit();
-        loginPage.passwordMail.sendKeys(PropertyManager.getInstance().getPassword());
-        loginPage.clickSubmit();
-        mailPage.filterMail.sendKeys("Simbirsoft Тестовое задание");
-        mailPage.filterMail.submit();
-        int beforeSize = Integer.parseInt(mailPage.getSizeMail().split(" ")[0]);
-        mailPage.sortMail();
-        Boolean runCycle = true;
-        var startTime = new Date().getTime();
-        while (runCycle) {
-            int currentSize = Integer.parseInt(mailPage.getSizeMail().split(" ")[0]);
-            if ((new Date().getTime() - startTime) < 30 || currentSize != beforeSize) {
-                runCycle = false;
-            }
-            beforeSize = currentSize;
-        }
-        mailPage.clickNew();
-        mailPage.addressMail.sendKeys(PropertyManager.getInstance().getAddressmail());
-        mailPage.themeMail.sendKeys("Simbirsoft Тестовое задание. Ативанов");
-        mailPage.textMail.sendKeys("Найдено ", mailPage.getSizeMail());
-        mailPage.sendMessage();
+        loginPage.cliclMail()
+                .inputLogin(PropertyManager.getInstance().getAddressmail())
+                .clickSubmit()
+                .inputPassword(PropertyManager.getInstance().getPassword())
+                .clickSubmit();
+        mailPage.fiterByTheme("Simbirsoft Тестовое задание папка:Входящие");
+
+        beforeSize = mailPage.getNumSize();
+        mailPage.clickNew()
+                .sendAddress(PropertyManager.getInstance().getAddressmail())
+                .sendTheme("Simbirsoft Тестовое задание Ативанов")
+                .sendText("Найдено ")
+                .sendMessage()
     }
 
     @After
-    public void after () {
+    public void after() {
         driver.quit();
+
     }
 }

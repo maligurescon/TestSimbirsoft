@@ -20,7 +20,7 @@ public class LoginPage {
 
     //Определение поля ввода логина электронной почты
     @FindBy(xpath = "//input[@type = 'text']")
-    public WebElement loginMail;
+    private WebElement loginMail;
 
     //Определение кнопки подтверждения введенных данных
     @FindBy(xpath = "//button[@type = 'submit']")
@@ -28,30 +28,30 @@ public class LoginPage {
 
     //Определение поля ввода пароля электронной почты
     @FindBy(xpath = "//input[@class = 'Textinput-Control' and @name = 'passwd']")
-    public WebElement passwordMail;
+    private WebElement passwordMail;
 
     @Step
     //Вход в окно авторизации
-    public void cliclMail() {
+    public LoginPage cliclMail() {
         mail.click();
+        return this;
     }
 
     @Step
-    public void inputLogin() {
-        this.loginMail.sendKeys(PropertyManager.getInstance().getAddressmail());
+    public LoginPage inputLogin(String getInputAddress){
+        loginMail.sendKeys(getInputAddress);
+        return this;
     }
-
     @Step
-    public void inputPassword() {
-        this.passwordMail.sendKeys(PropertyManager.getInstance().getPassword());
+    public LoginPage inputPassword(String getInputPassord) {
+        this.passwordMail.sendKeys(getInputPassord);
+        return this;
     }
 
     @Step
     //Нажатие кнопки подтверждения данных
-    public void clickSubmit(){
+    public LoginPage clickSubmit(){
         buttonSubmit.click();
+        return this;
     }
 }
-
-
-
